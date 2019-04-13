@@ -2,8 +2,6 @@ package task.sancom.restapi.careerdayservice.entity;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.annotation.Id;
-import task.sancom.restapi.careerdayservice.entity.Applicant;
 import task.sancom.restapi.careerdayservice.entity.enumerated.JobType;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
 
@@ -17,7 +15,8 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @Column(name = "job_id")
+    private UUID jobId;
 
     @Column(name="date_created")
     private ZonedDateTime dateCreated;
@@ -57,11 +56,11 @@ public class Job {
     }
 
     public UUID getId() {
-        return id;
+        return jobId;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        this.jobId = id;
     }
 
     public ZonedDateTime getDateCreated() {
