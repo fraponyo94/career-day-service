@@ -1,64 +1,55 @@
 package task.sancom.restapi.careerdayservice.entity;
 
-import task.sancom.restapi.careerdayservice.entity.enumerated.EducationLevel;
+
 import task.sancom.restapi.careerdayservice.entity.enumerated.Gender;
 
 import javax.persistence.*;
+
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="APPLLCANT")
-public class Applicant {
+@Table(name="JOBAPPLLCANT")
+public class JobApplicant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "applicant_id")
+    @Column(name = "APPLICANTID")
     private UUID applicantId;
 
-    @Column(name="first_name")
+    @Column(name="FIRSTNAME")
     private String firstName;
 
-    @Column(name="last_name")
+    @Column(name="LASTNAME")
     private String lastname;
 
-    @Column(name="email")
+    @Column(name="EMAIL")
     private String email;
 
-    @Column(name="phone")
+    @Column(name="PHONE")
     private int phoneNumber;
 
-    @Column(name = "education_level")
-    @Enumerated(EnumType.STRING)
-    private EducationLevel educationLevel;
-
-    @Column(name="years_of_experience")
-    private int yearsOfExperience;
-
-    @Column(name="gender")
+    @Column(name="GENDER")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "nationality")
+    @Column(name = "NATIONALITY")
     private String nationality;
 
-    @Column(name="study_programme")
+    @Column(name="STUDYPROGRAMME")
     private String studyProgramme;
 
-    @Column(name="date_created")
+    @Column(name="DATECREATED")
     private ZonedDateTime dateCreated;
 
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name="QUALIFICATION",nullable = false)
+    private Qualification qualification;
 
-    public Applicant() {
+
+    public JobApplicant() {
     }
 
-    public UUID getId() {
-        return applicantId;
-    }
-
-    public void setId(UUID id) {
-        this.applicantId = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -92,20 +83,20 @@ public class Applicant {
         this.phoneNumber = phoneNumber;
     }
 
-    public EducationLevel getEducationLevel() {
-        return educationLevel;
+    public UUID getApplicantId() {
+        return applicantId;
     }
 
-    public void setEducationLevel(EducationLevel educationLevel) {
-        this.educationLevel = educationLevel;
+    public void setApplicantId(UUID applicantId) {
+        this.applicantId = applicantId;
     }
 
-    public int getYearsOfExperience() {
-        return yearsOfExperience;
+    public Qualification getQualification() {
+        return qualification;
     }
 
-    public void setYearsOfExperience(int yearsOfExperience) {
-        this.yearsOfExperience = yearsOfExperience;
+    public void setQualification(Qualification qualification) {
+        this.qualification = qualification;
     }
 
     public Gender getGender() {

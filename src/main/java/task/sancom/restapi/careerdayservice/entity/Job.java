@@ -1,12 +1,12 @@
 package task.sancom.restapi.careerdayservice.entity;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+
 import task.sancom.restapi.careerdayservice.entity.enumerated.JobType;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Table(name = "JOB")
@@ -15,53 +15,50 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "job_id")
+    @Column(name = "JOBID")
     private UUID jobId;
 
-    @Column(name="date_created")
+    @Column(name="DATECREATED")
     private ZonedDateTime dateCreated;
 
-    @Column(name = "name")
+    @Column(name = "NAME",nullable = false)
     private String jobName;
 
-    @Column(name="description")
+    @Column(name="DESCRIPTION",nullable = false)
     private String description;
 
-    @Column(name="type")
+    @Column(name="TYPE")
     @Enumerated(EnumType.STRING)
     private JobType type;
 
-    @Column(name="other_jobtype")
+    @Column(name="OTHERJOBTYPE")
     private String otherJobType;
 
-    @Column(name="status")
+    @Column(name="STATUS")
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name="interview_date",unique = true)
+    @Column(name="INTERVIEWDATE",unique = true,nullable = false)
     private ZonedDateTime interviewDate;
 
-    @Column(name="interview_start_time")
+    @Column(name="INTERVIESTARTTIME",nullable = false)
     private ZonedDateTime interviewStartTime;
 
-    @Column(name="interview_end_time")
-    private ZonedDateTime intervieEndTime;
+    @Column(name="INTERVIEWENDDATE",nullable = false)
+    private ZonedDateTime interviewEndTime;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "applicantId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Applicant applicant;
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name="QUALIFICATION",nullable = false)
+    private Qualification qualification;
+
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "APPLICANT", nullable = false)
+    private Set<JobApplicant> jobApplicants;
 
     public Job() {
     }
 
-    public UUID getId() {
-        return jobId;
-    }
 
-    public void setId(UUID id) {
-        this.jobId = id;
-    }
 
     public ZonedDateTime getDateCreated() {
         return dateCreated;
@@ -127,19 +124,35 @@ public class Job {
         this.interviewStartTime = interviewStartTime;
     }
 
-    public ZonedDateTime getIntervieEndTime() {
-        return intervieEndTime;
+    public ZonedDateTime getInterviewEndTime() {
+        return interviewEndTime;
     }
 
-    public void setIntervieEndTime(ZonedDateTime intervieEndTime) {
-        this.intervieEndTime = intervieEndTime;
+    public void setInterviewEndTime(ZonedDateTime interviewEndTime) {
+        this.interviewEndTime = interviewEndTime;
     }
 
-    public Applicant getApplicant() {
-        return applicant;
+    public UUID getJobId() {
+        return jobId;
     }
 
-    public void setApplicant(Applicant applicant) {
-        this.applicant = applicant;
+    public void setJobId(UUID jobId) {
+        this.jobId = jobId;
+    }
+
+    public Qualification getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(Qualification qualification) {
+        this.qualification = qualification;
+    }
+
+    public Set<JobApplicant> getJobApplicants() {
+        return jobApplicants;
+    }
+
+    public void setJobApplicants(Set<JobApplicant> jobApplicants) {
+        this.jobApplicants = jobApplicants;
     }
 }

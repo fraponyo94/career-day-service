@@ -3,10 +3,9 @@ package task.sancom.restapi.careerdayservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import task.sancom.restapi.careerdayservice.entity.Applicant;
+import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException;
 import task.sancom.restapi.careerdayservice.repository.ApplicantRepository;
 
@@ -19,57 +18,56 @@ public class ApplicantController {
     private ApplicantRepository applicantRepository;
 
 
-    //Add job applicant details
-    @RequestMapping(value = "/applicant",method = RequestMethod.POST)
-    @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public Applicant save(@RequestBody Applicant applicant){
-        return applicantRepository.save(applicant);
+    //Add job jobApplicant details
+    @PostMapping( "/applicant")
+    public ResponseEntity<?> save(@RequestBody JobApplicant jobApplicant){
+        return ResponseEntity.ok(applicantRepository.save(jobApplicant));
     }
 
 
     //Update job applicant details
-    @RequestMapping(value = "/applicant/{applicantID}",method = RequestMethod.PUT)
-    @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public  Applicant update(@PathVariable UUID applicantID,@RequestBody Applicant updatedApplicant){
-        return applicantRepository.findById(applicantID).map(applicant -> {
-            applicant.setFirstName(updatedApplicant.getFirstName());
-            applicant.setLastname(updatedApplicant.getLastname());
-            applicant.setEmail(updatedApplicant.getEmail());
-            applicant.setPhoneNumber(updatedApplicant.getPhoneNumber());
-            applicant.setGender(updatedApplicant.getGender());
-            applicant.setEducationLevel(updatedApplicant.getEducationLevel());
-            applicant.setDateCreated(updatedApplicant.getDateCreated());
-            applicant.setNationality(updatedApplicant.getNationality());
-            applicant.setStudyProgramme(updatedApplicant.getStudyProgramme());
-            applicant.setYearsOfExperience(updatedApplicant.getYearsOfExperience());
-           return applicantRepository.save(applicant);
+    @PutMapping("/applicant/{applicantID}")
+    public  ResponseEntity<JobApplicant> update(@PathVariable UUID applicantID, @RequestBody JobApplicant updatedJobApplicant){
+        return applicantRepository.findById(applicantID).map(jobApplicant -> {
+            jobApplicant.setFirstName(updatedJobApplicant.getFirstName());
+            jobApplicant.setLastname(updatedJobApplicant.getLastname());
+            jobApplicant.setEmail(updatedJobApplicant.getEmail());
+            jobApplicant.setPhoneNumber(updatedJobApplicant.getPhoneNumber());
+            jobApplicant.setGender(updatedJobApplicant.getGender());
+            jobApplicant.getQualification().setEducationLevel(updatedJobApplicant.getQualification().getEducationLevel());
+            jobApplicant.setDateCreated(updatedJobApplicant.getDateCreated());
+            jobApplicant.setNationality(updatedJobApplicant.getNationality());
+            jobApplicant.setStudyProgramme(updatedJobApplicant.getStudyProgramme());
+            jobApplicant.getQualification().setYearsOfExperience(updatedJobApplicant.getQualification().getYearsOfExperience());
+           applicantRepository.save(jobApplicant);
+           return ResponseEntity.ok(jobApplicant);
 
-        }).orElseThrow(()-> new ResourceNotFoundException("Job Applicant with Applicant Id = "+applicantID+" cannot be found"));
+        }).orElseThrow(()-> new ResourceNotFoundException("Job JobApplicant with JobApplicant Id = "+applicantID+" cannot be found"));
     }
 
 
     //Find all applicants
-    @RequestMapping(value = "/applicants")
-    public Page<Applicant> findAll(Pageable pageable){
+    @GetMapping("/applicants")
+    public Page<JobApplicant> findAll(Pageable pageable){
         return applicantRepository.findAll(pageable);
     }
 
-    //Find Applicant given applicant Id
-    @RequestMapping(value="/applicants/{applicantID}")
-    public  Applicant findApplicant(@PathVariable UUID applicantID){
-        return applicantRepository.findById(applicantID).orElseThrow(()->new ResourceNotFoundException("Job Applicant with Applicant Id = "+applicantID+" cannot be found"));
+    //Find JobApplicant given applicant Id
+    @GetMapping("/applicants/{applicantID}")
+    public JobApplicant findApplicant(@PathVariable UUID applicantID){
+        return applicantRepository.findById(applicantID).orElseThrow(()->new ResourceNotFoundException("Job JobApplicant with JobApplicant Id = "+applicantID+" cannot be found"));
     }
 
 
     //Delete Job applicant Entry
-    @RequestMapping(value = "/applicants/{applicantID}",method = RequestMethod.DELETE)
+    @DeleteMapping("/applicants/{applicantID}")
     public ResponseEntity<?> deleteApplicant(@PathVariable UUID applicantID){
 
-        return applicantRepository.findById(applicantID).map(applicant -> {
-                    applicantRepository.delete(applicant);
+        return applicantRepository.findById(applicantID).map(jobApplicant -> {
+                    applicantRepository.delete(jobApplicant);
                     return ResponseEntity.ok().build();
                 }
-        ).orElseThrow(() -> new ResourceNotFoundException("Job Applicant with Applicant Id = "+applicantID+ " cannot be found"));
+        ).orElseThrow(() -> new ResourceNotFoundException("Job JobApplicant with JobApplicant Id = "+applicantID+ " cannot be found"));
 
     }
 
