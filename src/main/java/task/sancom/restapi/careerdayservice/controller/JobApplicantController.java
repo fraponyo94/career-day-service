@@ -3,7 +3,6 @@ package task.sancom.restapi.careerdayservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import task.sancom.restapi.careerdayservice.component.JobInterviewComponent;
@@ -16,6 +15,7 @@ import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException;
 import task.sancom.restapi.careerdayservice.repository.JobApplicantRepository;
 
 import java.util.HashSet;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -130,9 +130,17 @@ public class JobApplicantController {
        }else {
            throw new ResourceNotFoundException("Job Applicant with id = "+jobApplicantId+" cannot be found");
        }
-
    }
 
+
+   //List job interviews an applicant has enrolled for
+    @GetMapping("applicants/{applicantId}/job-interviews")
+    public Set<Job> viewJobInterviewsPerApplicant(@PathVariable UUID applicantId) {
+
+        return applicantRepository.findById(applicantId).map(applicant -> {
+            return applicant.getJobInterviews();
+        }).orElseThrow(() -> new ResourceNotFoundException("Job with Id = " + applicantId + " cannot be found"));
+    }
 
 
 
