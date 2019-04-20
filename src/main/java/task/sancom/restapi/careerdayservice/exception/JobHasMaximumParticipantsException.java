@@ -4,17 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class MaximumJobsAppliedException  extends RuntimeException{
-    final static String message = "Limit reached.A maximum of 3 interviews is allowed per day";
+public class JobHasMaximumParticipantsException extends RuntimeException {
+    final static String message ="Maximum number of participants reached.Please try again later";
 
-    public MaximumJobsAppliedException(){
+    public JobHasMaximumParticipantsException(){
         super(message);
     }
 
-
-
-    public MaximumJobsAppliedException (Throwable err) {
-        super(message, err);
+    public JobHasMaximumParticipantsException(Throwable err){
+        super(message,err);
     }
 
     @Override
@@ -22,3 +20,4 @@ public class MaximumJobsAppliedException  extends RuntimeException{
         return this;
     }
 }
+
