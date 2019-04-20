@@ -1,10 +1,12 @@
 package task.sancom.restapi.careerdayservice.entity;
 
 
+import org.hibernate.annotations.CreationTimestamp;
 import task.sancom.restapi.careerdayservice.entity.enumerated.JobType;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
 
 import javax.persistence.*;
+
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +20,8 @@ public class Job {
     @Column(name = "JOBID")
     private UUID jobId;
 
-    @Column(name="DATECREATED")
+    @Column(name="DATECREATED",insertable = false, updatable = false)
+    @CreationTimestamp
     private ZonedDateTime dateCreated;
 
     @Column(name = "NAME",nullable = false)
@@ -52,13 +55,10 @@ public class Job {
     private Qualification qualification;
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "APPLICANT", nullable = false)
+    @JoinColumn(name = "APPLICANT")
     private Set<JobApplicant> jobApplicants;
 
-    public Job() {
-    }
-
-
+    public Job() {   }
 
     public ZonedDateTime getDateCreated() {
         return dateCreated;

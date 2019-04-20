@@ -4,12 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import task.sancom.restapi.careerdayservice.entity.Job;
+import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException;
 import task.sancom.restapi.careerdayservice.repository.JobRepository;
 
+
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -50,7 +54,14 @@ public class JobController {
 
     }
 
-    //View Participants for a given job
+
+    //View all Participants for a given job
+    @GetMapping("/jobs/{jobID}/participants")
+    public Set<JobApplicant> getJobParticipants(@PathVariable UUID jobID){
+      return jobRepository.findById(jobID).map(job -> {
+          return job.getJobApplicants();
+      }).orElseThrow(()->new ResourceNotFoundException("Job with Id = "+jobID+" cannot be found"));
+    }
 
 
 

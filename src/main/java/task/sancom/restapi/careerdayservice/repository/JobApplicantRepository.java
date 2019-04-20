@@ -7,5 +7,5 @@ import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 import java.util.UUID;
 
 @Repository
-public interface ApplicantRepository extends JpaRepository<JobApplicant, UUID> {
+public interface JobApplicantRepository extends JpaRepository<JobApplicant, UUID> {
 }

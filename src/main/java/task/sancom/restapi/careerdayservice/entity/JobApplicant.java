@@ -1,11 +1,13 @@
 package task.sancom.restapi.careerdayservice.entity;
 
 
+import org.hibernate.annotations.CreationTimestamp;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Gender;
 
 import javax.persistence.*;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -39,12 +41,16 @@ public class JobApplicant {
     @Column(name="STUDYPROGRAMME")
     private String studyProgramme;
 
-    @Column(name="DATECREATED")
+    @Column(name="DATECREATED",insertable = false, updatable = false)
+    @CreationTimestamp
     private ZonedDateTime dateCreated;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name="QUALIFICATION",nullable = false)
     private Qualification qualification;
+
+    @ManyToMany
+    private Set<Job> jobInterviews;
 
 
     public JobApplicant() {
@@ -127,7 +133,16 @@ public class JobApplicant {
         return dateCreated;
     }
 
+
     public void setDateCreated(ZonedDateTime dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public Set<Job> getJobInterviews() {
+        return jobInterviews;
+    }
+
+    public void setJobInterviews(Set<Job> jobInterviews) {
+        this.jobInterviews = jobInterviews;
     }
 }
