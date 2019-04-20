@@ -25,7 +25,7 @@ public class JobApplicant {
     @Column(name="LASTNAME")
     private String lastname;
 
-    @Column(name="EMAIL")
+    @Column(name="EMAIL",nullable = false)
     private String email;
 
     @Column(name="PHONE")
@@ -46,10 +46,11 @@ public class JobApplicant {
     private ZonedDateTime dateCreated;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name="QUALIFICATION",nullable = false)
+    @JoinColumn(name="QUALIFICATIONS",nullable = false)
     private Qualification qualification;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH,mappedBy = "jobApplicants")
+    @JoinColumn(name = "JOBINTERVIEWS")
     private Set<Job> jobInterviews;
 
 

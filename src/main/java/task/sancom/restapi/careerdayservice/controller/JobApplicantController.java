@@ -28,8 +28,6 @@ public class JobApplicantController {
     @Autowired
     private JobInterviewComponent jobInterviewComponent;
 
-
-
     //Add job jobApplicant details
     @PostMapping( "/applicants")
     public ResponseEntity<?> save(@RequestBody JobApplicant jobApplicant){

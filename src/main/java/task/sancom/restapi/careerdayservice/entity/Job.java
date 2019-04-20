@@ -44,7 +44,7 @@ public class Job {
     @Column(name="INTERVIEWDATE",unique = true,nullable = false)
     private ZonedDateTime interviewDate;
 
-    @Column(name="INTERVIESTARTTIME",nullable = false)
+    @Column(name="INTERVIEWSTARTTIME",nullable = false)
     private ZonedDateTime interviewStartTime;
 
     @Column(name="INTERVIEWENDDATE",nullable = false)
@@ -55,7 +55,7 @@ public class Job {
     private Qualification qualification;
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "APPLICANT")
+    @JoinColumn(name = "JOBAPPLICANTS")
     private Set<JobApplicant> jobApplicants;
 
     public Job() {   }
