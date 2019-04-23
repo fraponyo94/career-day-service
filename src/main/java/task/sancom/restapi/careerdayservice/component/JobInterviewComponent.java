@@ -1,7 +1,7 @@
 package task.sancom.restapi.careerdayservice.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.AccessType;
+
 import org.springframework.stereotype.Component;
 import task.sancom.restapi.careerdayservice.entity.Job;
 import task.sancom.restapi.careerdayservice.entity.JobApplicant;
@@ -22,7 +22,7 @@ public class JobInterviewComponent {
 
     //Check if a maximum of 20 participants is reached for a given job interview
     public boolean maximumParticipantsReached(UUID jobId, ZonedDateTime date){
-        Job job = jobRepository.findByJobIdAAndInterviewDate(jobId,date);
+        Job job = jobRepository.findByJobIdAndInterviewDate(jobId,date);
          if(job.getJobApplicants().size() == 20){
              return true;
          }else {

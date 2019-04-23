@@ -3,17 +3,20 @@ package task.sancom.restapi.careerdayservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
+
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import task.sancom.restapi.careerdayservice.component.TimeFormatterComponent;
 import task.sancom.restapi.careerdayservice.entity.Job;
 import task.sancom.restapi.careerdayservice.entity.JobApplicant;
-import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException;
+
+import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException1;
 import task.sancom.restapi.careerdayservice.repository.JobRepository;
 
 
+import javax.validation.Valid;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -21,13 +24,19 @@ import java.util.UUID;
 @RestController
 public class JobController {
 
-    @Autowired
+    private TimeFormatterComponent timeFormatterComponent;
     private JobRepository jobRepository;
+
+    public JobController(TimeFormatterComponent timeFormatterComponent, JobRepository jobRepository) {
+        this.timeFormatterComponent = timeFormatterComponent;
+        this.jobRepository = jobRepository;
+    }
 
     //Save job application
     @PostMapping("/jobs")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<?> saveJob(@RequestBody Job job){
+    public ResponseEntity<Job> saveJob(@RequestBody @Valid Job job){
+        job.setInterviewDate(timeFormatterComponent.convert(job.getInterviewDate().toString()));
         return ResponseEntity.ok(jobRepository.save(job));
 
     }
@@ -38,31 +47,32 @@ public class JobController {
         return jobRepository.findAll(pageable);
     }
 
+
     //Find job given job ID
     @GetMapping("/jobs/{jobID}")
-    public Job findJob(@PathVariable UUID jobID){
-        return jobRepository.findById(jobID).orElseThrow(()->new ResourceNotFoundException("Job with Id = "+jobID+" cannot be found"));
+    public Job findJob(@PathVariable UUID jobID) throws ResourceNotFoundException1 {
+        return jobRepository.findById(jobID).orElseThrow(()->new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString()));
     }
 
     //Delete Job  Entry
     @DeleteMapping("/jobs/{jobID}")
-    public ResponseEntity<?> deleteApplicant(@PathVariable UUID jobID){
+    public ResponseEntity<?> deleteApplicant(@PathVariable UUID jobID) throws ResourceNotFoundException1{
 
         return jobRepository.findById(jobID).map(job -> {
                     jobRepository.delete(job);
                     return ResponseEntity.ok().build();
                 }
-        ).orElseThrow(() -> new ResourceNotFoundException("Job with Id = \"+jobID+\" cannot be found"));
+        ).orElseThrow(() -> new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString()));
 
     }
 
 
     //View all Participants for a given job
     @GetMapping("/jobs/{jobID}/participants")
-    public Set<JobApplicant> getJobParticipants(@PathVariable UUID jobID){
+    public Set<JobApplicant> getJobParticipants(@PathVariable UUID jobID) throws ResourceNotFoundException1{
       return jobRepository.findById(jobID).map(job -> {
           return job.getJobApplicants();
-      }).orElseThrow(()->new ResourceNotFoundException("Job with Id = "+jobID+" cannot be found"));
+      }).orElseThrow(()->new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString()));
     }
 
 
@@ -70,7 +80,7 @@ public class JobController {
     @GetMapping("/jobs/search/jobs-available")
     public Page<Job> findJobInterviews(@RequestParam ("name") String jobName, @RequestParam("interview-date")ZonedDateTime interviewDate,
                                        @RequestParam("job-type") String type,@RequestParam("education-level")String educationLevel,
-                                       @RequestParam("years-of-experience") int yearsOfExperience,Pageable pageable){
+                                       @RequestParam("years-of-experience") int yearsOfExperience,Pageable pageable) throws ResourceNotFoundException1{
         if(interviewDate !=null){
             if(type != null){
                 if(educationLevel != null){
@@ -96,7 +106,7 @@ public class JobController {
            return  jobRepository.findByQualification_EducationLevel(educationLevel,pageable);
         }else {
 
-            throw  new ResourceNotFoundException("No Resource Found");
+            throw  new ResourceNotFoundException1(Job.class,"No Resource was found","");
 
         }
         return null;

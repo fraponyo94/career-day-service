@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Gender;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -20,15 +21,20 @@ public class JobApplicant {
     private UUID applicantId;
 
     @Column(name="FIRSTNAME")
+    @NotNull
     private String firstName;
 
     @Column(name="LASTNAME")
     private String lastname;
 
     @Column(name="EMAIL",nullable = false)
+    @Email
+    @NotBlank
     private String email;
 
-    @Column(name="PHONE")
+    @Column(name="PHONE",length = 20)
+    @Pattern(regexp="(^$|[0-9]{10})")
+    @Size(min=9,max=12)
     private int phoneNumber;
 
     @Column(name="GENDER")
@@ -49,7 +55,7 @@ public class JobApplicant {
     @JoinColumn(name="QUALIFICATIONS",nullable = false)
     private Qualification qualification;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH,mappedBy = "jobApplicants")
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH)
     @JoinColumn(name = "JOBINTERVIEWS")
     private Set<Job> jobInterviews;
 

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface JobRepository  extends JpaRepository<Job, UUID> {
-    Job findByJobIdAAndInterviewDate(UUID jobId, ZonedDateTime date);
+    Job findByJobIdAndInterviewDate(UUID jobId, ZonedDateTime date);
     Page<Job> findByJobName(String JobName,Pageable pageable);
     Page<Job> findByInterviewDate(ZonedDateTime interviewDate,Pageable pageable);
     Page<Job> findByInterviewDateAndTypeIgnoreCase(ZonedDateTime interviewDate,String jobType,Pageable pageable);

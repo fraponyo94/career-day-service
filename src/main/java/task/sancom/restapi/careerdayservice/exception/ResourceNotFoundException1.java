@@ -1,23 +1,22 @@
 package task.sancom.restapi.careerdayservice.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+public class ResourceNotFoundException1 extends Exception {
 
-public class JobHasMaximumParticipantsException
-        extends Exception{
-
-    public JobHasMaximumParticipantsException(Class clazz, String... searchParamsMap) {
-        super(JobHasMaximumParticipantsException.generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
+    public ResourceNotFoundException1(Class clazz, String... searchParamsMap) {
+        super(ResourceNotFoundException1.generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
     }
 
     private static String generateMessage(String entity, Map<String, String> searchParams) {
-        return " " + searchParams;
-
+        return StringUtils.capitalize(entity) +
+                " was not found for parameters " +
+                searchParams;
     }
 
     private static <K, V> Map<K, V> toMap(
@@ -30,4 +29,3 @@ public class JobHasMaximumParticipantsException
                         Map::putAll);
     }
 }
-

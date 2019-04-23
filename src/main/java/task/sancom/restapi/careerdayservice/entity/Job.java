@@ -6,6 +6,7 @@ import task.sancom.restapi.careerdayservice.entity.enumerated.JobType;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -25,9 +26,11 @@ public class Job {
     private ZonedDateTime dateCreated;
 
     @Column(name = "NAME",nullable = false)
+    @NotNull
     private String jobName;
 
     @Column(name="DESCRIPTION",nullable = false)
+    @NotNull
     private String description;
 
     @Column(name="TYPE")
@@ -42,12 +45,15 @@ public class Job {
     private Status status;
 
     @Column(name="INTERVIEWDATE",unique = true,nullable = false)
+    @NotNull(message = "Interview Date required")
     private ZonedDateTime interviewDate;
 
     @Column(name="INTERVIEWSTARTTIME",nullable = false)
+    @NotNull(message = "Intervie start time required")
     private ZonedDateTime interviewStartTime;
 
     @Column(name="INTERVIEWENDDATE",nullable = false)
+    @NotNull(message = "Interview End time required")
     private ZonedDateTime interviewEndTime;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
