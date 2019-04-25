@@ -1,7 +1,9 @@
 package task.sancom.restapi.careerdayservice.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.Range;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Gender;
 
 import javax.persistence.*;
@@ -32,9 +34,8 @@ public class JobApplicant {
     @NotBlank
     private String email;
 
-    @Column(name="PHONE",length = 20)
-    @Pattern(regexp="(^$|[0-9]{10})")
-    @Size(min=9,max=12)
+    @Column(name="PHONE",length = 15)
+    @Min(9)
     private int phoneNumber;
 
     @Column(name="GENDER")
@@ -55,6 +56,7 @@ public class JobApplicant {
     @JoinColumn(name="QUALIFICATIONS",nullable = false)
     private Qualification qualification;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.DETACH)
     @JoinColumn(name = "JOBINTERVIEWS")
     private Set<Job> jobInterviews;
@@ -62,6 +64,20 @@ public class JobApplicant {
 
     public JobApplicant() {
     }
+
+    public JobApplicant(@NotNull String firstName, @Email @NotBlank String email, Qualification qualification) {
+        this.firstName = firstName;
+        this.email = email;
+        this.qualification = qualification;
+    }
+
+    public JobApplicant(UUID id,@NotNull String firstName, @Email @NotBlank String email, Qualification qualification) {
+        this.applicantId =id;
+        this.firstName = firstName;
+        this.email = email;
+        this.qualification = qualification;
+    }
+
 
 
     public String getFirstName() {
@@ -151,5 +167,13 @@ public class JobApplicant {
 
     public void setJobInterviews(Set<Job> jobInterviews) {
         this.jobInterviews = jobInterviews;
+    }
+
+    @Override
+    public String toString() {
+        return "JobApplicant{" +
+                "firstName='" + firstName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

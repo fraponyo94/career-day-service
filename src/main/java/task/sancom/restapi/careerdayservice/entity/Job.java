@@ -66,6 +66,16 @@ public class Job {
 
     public Job() {   }
 
+    public Job(UUID jobId,@NotNull String jobName, @NotNull String description, @NotNull(message = "Interview Date required") ZonedDateTime interviewDate, @NotNull(message = "Intervie start time required") ZonedDateTime interviewStartTime, @NotNull(message = "Interview End time required") ZonedDateTime interviewEndTime, Qualification qualification) {
+        this.jobId = jobId;
+        this.jobName = jobName;
+        this.description = description;
+        this.interviewDate = interviewDate;
+        this.interviewStartTime = interviewStartTime;
+        this.interviewEndTime = interviewEndTime;
+        this.qualification = qualification;
+    }
+
     public ZonedDateTime getDateCreated() {
         return dateCreated;
     }

@@ -24,6 +24,12 @@ public class Qualification {
     public Qualification() {
     }
 
+
+    public Qualification(EducationLevel educationLevel, int yearsOfExperience) {
+        this.educationLevel = educationLevel;
+        this.yearsOfExperience = yearsOfExperience;
+    }
+
     public UUID getQualificationId() {
         return qualificationId;
     }

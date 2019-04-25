@@ -24,11 +24,11 @@ import java.util.UUID;
 @RestController
 public class JobController {
 
-    private TimeFormatterComponent timeFormatterComponent;
+
     private JobRepository jobRepository;
 
-    public JobController(TimeFormatterComponent timeFormatterComponent, JobRepository jobRepository) {
-        this.timeFormatterComponent = timeFormatterComponent;
+    public JobController(JobRepository jobRepository) {
+
         this.jobRepository = jobRepository;
     }
 
@@ -36,7 +36,7 @@ public class JobController {
     @PostMapping("/jobs")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Job> saveJob(@RequestBody @Valid Job job){
-        job.setInterviewDate(timeFormatterComponent.convert(job.getInterviewDate().toString()));
+
         return ResponseEntity.ok(jobRepository.save(job));
 
     }

@@ -3,6 +3,7 @@ package task.sancom.restapi.careerdayservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import task.sancom.restapi.careerdayservice.component.JobInterviewComponent;
@@ -16,6 +17,7 @@ import task.sancom.restapi.careerdayservice.repository.JobRepository;
 import javax.validation.Valid;
 import java.util.HashSet;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,38 +36,41 @@ public class JobApplicantController {
 
     //Add job jobApplicant details
     @PostMapping( "/applicants")
-    public ResponseEntity<?> save(@RequestBody @Valid JobApplicant jobApplicant){
-
-        return ResponseEntity.ok(applicantRepository.save(jobApplicant));
+    @ResponseStatus(HttpStatus.CREATED)
+    public JobApplicant save(@RequestBody @Valid JobApplicant jobApplicant) throws ResourceNotFoundException1{
+        if(jobApplicant != null) {
+           return applicantRepository.save(jobApplicant);
+        }else {
+            throw new ResourceNotFoundException1(JobApplicant.class,"Resource is empty","Please provide some data to save");
+        }
     }
 
 
     //Update job applicant details
     @PutMapping("/applicants/{applicantID}")
-    public  ResponseEntity<JobApplicant> update(@PathVariable UUID applicantID, @RequestBody @Valid JobApplicant updatedJobApplicant) throws ResourceNotFoundException1{
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public  JobApplicant update(@PathVariable UUID applicantID, @RequestBody @Valid JobApplicant updatedJobApplicant) throws ResourceNotFoundException1 {
 
+        JobApplicant jobApplicant = applicantRepository.findById(applicantID).get();
 
-            return applicantRepository.findById(applicantID).map(jobApplicant -> {
-                jobApplicant.setFirstName(updatedJobApplicant.getFirstName());
-                jobApplicant.setLastname(updatedJobApplicant.getLastname());
-                jobApplicant.setEmail(updatedJobApplicant.getEmail());
-                jobApplicant.setPhoneNumber(updatedJobApplicant.getPhoneNumber());
-                jobApplicant.setGender(updatedJobApplicant.getGender());
-                jobApplicant.getQualification().setEducationLevel(updatedJobApplicant.getQualification().getEducationLevel());
-                jobApplicant.setDateCreated(updatedJobApplicant.getDateCreated());
-                jobApplicant.setNationality(updatedJobApplicant.getNationality());
-                jobApplicant.setStudyProgramme(updatedJobApplicant.getStudyProgramme());
-                jobApplicant.getQualification().setYearsOfExperience(updatedJobApplicant.getQualification().getYearsOfExperience());
-               applicantRepository.save(jobApplicant);
+        if (jobApplicant != null) {
 
-               return ResponseEntity.ok(jobApplicant);
+            jobApplicant.setFirstName(updatedJobApplicant.getFirstName());
+            jobApplicant.setLastname(updatedJobApplicant.getLastname());
+            jobApplicant.setEmail(updatedJobApplicant.getEmail());
+            jobApplicant.setPhoneNumber(updatedJobApplicant.getPhoneNumber());
+            jobApplicant.setGender(updatedJobApplicant.getGender());
+            jobApplicant.getQualification().setEducationLevel(updatedJobApplicant.getQualification().getEducationLevel());
+            jobApplicant.setDateCreated(updatedJobApplicant.getDateCreated());
+            jobApplicant.setNationality(updatedJobApplicant.getNationality());
+            jobApplicant.setStudyProgramme(updatedJobApplicant.getStudyProgramme());
+            jobApplicant.getQualification().setYearsOfExperience(updatedJobApplicant.getQualification().getYearsOfExperience());
+            return applicantRepository.save(jobApplicant);
 
-            }).orElseThrow(()-> new ResourceNotFoundException1(JobApplicant.class,"Job-Applicant ID",applicantID.toString()));
-
-
-
+        } else {
+            throw new ResourceNotFoundException1(JobApplicant.class, "Job-Applicant ID", applicantID.toString());
+        }
     }
-
 
     //Find all applicants
     @GetMapping("/applicants")
@@ -95,22 +100,25 @@ public class JobApplicantController {
     }
 
     //Select job interviews to participate in
-    @PostMapping("applicants/{jobApplicantId}/select")
+    @PutMapping("applicants/{jobApplicantId}/select")
     public  ResponseEntity<?> selectJobInterviews(@RequestParam("id") UUID jobID,@PathVariable UUID jobApplicantId)
     throws MaximumJobsAppliedException,JobHasMaximumParticipantsException,JobConflictException,ResourceNotFoundException1{
 
         //Job intervie selected
-        Job jobInterviewSelected = jobRepository.findById(jobID).get();
+        Optional<Job> jobInterviewSelected1 = jobRepository.findById(jobID);
 
         //Find the job applicant object
-        JobApplicant applicant = applicantRepository.findById(jobApplicantId).get();
+        Optional<JobApplicant> applicant1 = applicantRepository.findById(jobApplicantId);
 
-        if(applicant != null && jobInterviewSelected != null) {
+        if(applicant1.isPresent() && jobInterviewSelected1.isPresent()) {
+            Job jobInterviewSelected = jobInterviewSelected1.get();
+            JobApplicant applicant = applicant1.get();
             //check if Job has Maximum participants
-            if (!jobInterviewComponent.maximumParticipantsReached(jobApplicantId, jobInterviewSelected.getInterviewDate())) {
+            if (!jobInterviewComponent.maximumParticipantsReached(jobInterviewSelected)) {
+
                 if (!jobInterviewComponent.maximumInterviewsPerDayReached(jobApplicantId, jobInterviewSelected.getInterviewDate())) {
 
-                    if (!jobInterviewComponent.isJobInterviewConflict(jobApplicantId, jobInterviewSelected.getInterviewDate()
+                    if (jobInterviewComponent.isJobInterviewConflict(jobApplicantId, jobInterviewSelected.getInterviewDate()
                             , jobInterviewSelected.getInterviewStartTime(), jobInterviewSelected.getInterviewEndTime())) {
 
                             Set<Job> jobInterviews = new HashSet<>();
@@ -121,13 +129,13 @@ public class JobApplicantController {
 
 
                     } else {
-                        throw new JobConflictException(Job.class,"Job interviews Conflict. You have already enrolled for another job interview which lies within the same interview date and time selected");
+                        throw new JobConflictException(Job.class,"Job interviews Conflict","");
                     }
                 }else {
-                    throw new MaximumJobsAppliedException(Job.class,"Youu have reached your maximum job Application");
+                    throw new MaximumJobsAppliedException(Job.class,"Youu have reached your maximum job Application","");
                 }
             } else{
-                throw new JobHasMaximumParticipantsException(Job.class,"Maximum number of participants reached.Please try again later");
+                throw new JobHasMaximumParticipantsException(Job.class,"Maximum number of participants reached.Please try again later","");
 
 
                 }
@@ -139,7 +147,7 @@ public class JobApplicantController {
 
 
     //DeSelect job interviews to participate opt out
-    @PostMapping("applicants/{jobApplicantId}/deselect")
+    @PutMapping("applicants/{jobApplicantId}/deselect")
    public ResponseEntity<?> deselectJobInterviews(@PathVariable UUID jobApplicantId,@RequestParam("id") UUID jobID ) throws ResourceNotFoundException1{
 
         //Job intervie selected
