@@ -5,20 +5,20 @@ a participant can register to participate in an interview marathon by selecting 
 ## API Endpoints
 ### Job Applicant Endpoints
 In the API,one can add/Read/Update/Delete JobApplicant resource using the following endpoints
-#### POST http://localhost:8080/API/v1/applicants //Creates JobApplicant Resource
+#### POST http://localhost:8080/API/v1/applicant   //Creates JobApplicant Resource
       {
-      "firstName": "firstName",
-       "lastname": "lastName",
-       "email": "email",
-       "phoneNumber":000,
-       "gender": "MALE/FEMALE/OTHER",
-       "studyProgramme": "",
-       "nationality":"",
-       "qualification":{
-        "educationLevel": "POSTGRADUATE/GRADUATE/HIGHSCHOOL/PRIMARY/OTHER",
-        "yearsOfExperience": 1
-       }
-       
+		  "firstName": "required",
+		   "lastname": "required",
+		   "email": "required",
+		   "phoneNumber":"required",
+		   "gender": "FEMALE/MALE", //Enum
+		   "studyProgramme": "Bachelor of Arts",
+		   "qualification":{
+		   	
+		    "educationLevel": "POSTGRADUATE/GRADUATE/HIGHSCHOOL/PRIMARY/OTHER", //Enum
+		    "yearsOfExperience": 1
+		   }
+		 
  #### PUT http://localhost:8080/API/v1/applicants/{applicantID} //Update JobApplicant Resource
  
  #### GET http://localhost:8080/API/v1/applicants //Find All Job Applicants
@@ -30,7 +30,7 @@ In the API,one can add/Read/Update/Delete JobApplicant resource using the follow
               "email": "andrewwesonga@gmail.com",
               "phoneNumber": 700000000000,
               "gender": "MALE",
-              "nationality": "Kenyan",
+            
               "studyProgramme": "Bachelor of Arts",
               "dateCreated": null,
               "qualification": {
@@ -99,17 +99,17 @@ In the API,one can add/Read/Update/Delete JobApplicant resource using the follow
    
    ## Jobs Endpoints
    
-   ####  POST http://localhost:8080/API/v1/jobs //Create a new job
+   ####  POST http://localhost:8080/API/v1/job //Create a new job
              {
-              "jobName": "Api development",
-               "description": "Develop an api system",
-               "type": "APIEngineer",         
-               "status": "OPEN",
+              "jobName": "Job Name",
+               "description": "Description",
+               "type": "Job type",         
+               "status": "OPEN/Closed",
                "interviewDate": "2019-04-23T23:22:18.87+03:00",
-               "interviewStartTime":"2019-04-23T23:23:18.87+03:00",
-               "interviewEndTime": "2019-04-23T23:24:18.87+03:00",
+               "interviewStartTime":"T23:23:18.87+03:00",
+               "interviewEndTime": "23:24:18.87+03:00",
                "qualification":{
-                "educationLevel": "GRADUATE",
+                "educationLevel": "",
                 "yearsOfExperience": 1
            }
 
@@ -124,11 +124,11 @@ In the API,one can add/Read/Update/Delete JobApplicant resource using the follow
                     "jobName": "Api development",
                     "description": "Develop an api system",
                     "type": "APIEngineer",
-                    "otherJobType": null,
+                 
                     "status": "OPEN",
                     "interviewDate": "2019-04-23T23:22:18.87+03:00",
-                    "interviewStartTime": "2019-04-23T23:23:18.87+03:00",
-                    "interviewEndTime": "2019-04-23T23:23:18.87+03:00",
+                    "interviewStartTime": "T23:23:18.87+03:00",
+                    "interviewEndTime": "T23:23:18.87+03:00",
                     "qualification": {
                         "qualificationId": "ffad2a05-714c-4fe9-af47-36f696749c0d",
                         "educationLevel": "GRADUATE",
@@ -167,4 +167,6 @@ In the API,one can add/Read/Update/Delete JobApplicant resource using the follow
 #### GET http://localhost:8080/API/v1/jobs/{jobId} //View available job by Id
 
 #### DELETE http://localhost:8080/jobs/{jobID}    //Delete job
+#### GET /jobs/{jobID}/participants  //View all Participants for a given job
+#### GET /jobs/search/{param = name,intervie-date,job-type,education-level,years-of-experience}
       
