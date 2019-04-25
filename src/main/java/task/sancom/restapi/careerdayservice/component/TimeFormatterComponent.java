@@ -5,26 +5,37 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Component
-public class TimeFormatterComponent implements Converter<String, ZonedDateTime> {
-
-      private final DateTimeFormatter formatter;
+public class TimeFormatterComponent {
 
 
-    public TimeFormatterComponent() {
-            // set the zone in the formatter
-            this.formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+
+    public Date date(String dateInString) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+
+
+        Date date = formatter.parse(dateInString);
+
+        return date;
+
+
+    }
+    public  Date time (String time) throws ParseException{
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        Date date = formatter.parse(time);
+        return date;
+
+
 
     }
 
-    @Override
-    public ZonedDateTime convert(String source) {
-            // now the formatter has a zone set, so I can parse directly to ZonedDateTime
-            return ZonedDateTime.parse(source, this.formatter);
-            }
+
 }

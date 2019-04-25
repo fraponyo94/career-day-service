@@ -17,8 +17,6 @@ import java.util.UUID;
 @Component
 public class JobInterviewComponent {
 
-    @Autowired
-    private JobRepository jobRepository;
 
     @Autowired
     private JobApplicantRepository applicantRepository;

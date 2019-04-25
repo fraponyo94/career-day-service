@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import task.sancom.restapi.careerdayservice.component.JobInterviewComponent;
+import task.sancom.restapi.careerdayservice.component.TimeFormatterComponent;
 import task.sancom.restapi.careerdayservice.entity.Job;
 import task.sancom.restapi.careerdayservice.entity.enumerated.EducationLevel;
 import task.sancom.restapi.careerdayservice.exception.FieldViolationException;
@@ -19,11 +21,15 @@ public class JobService {
     @Autowired
     private JobRepository repository;
 
+
+
     //Save Job
     public void saveJob(Job job) throws FieldViolationException{
+
         if(job.getInterviewStartTime().after(job.getInterviewEndTime())){
             throw new FieldViolationException(Job.class,"Interview Start Time cannot be after Interview End Time","");
         }else {
+
             repository.save(job);
         }
     }
@@ -67,7 +73,7 @@ public class JobService {
 
                         if(interviewDate !=null){
                             if(type != null){
-                                    return  repository.findByInterviewDateAndTypeIgnoreCase(interviewDate,type,pageable);
+                                    return  repository.findByInterviewDateAndJobTypeIgnoreCase(interviewDate,type,pageable);
                                 }
                             else if(educationLevel != null){
                                 return repository.findByInterviewDateAndQualification_EducationLevelIgnoreCase(interviewDate,educationLevel,pageable);

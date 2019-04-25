@@ -48,13 +48,24 @@ public class JobApplicantController {
 
 
     //Update job applicant details
-    @PutMapping("/applicant")
+    @PutMapping("/applicants/{applicantId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public  JobApplicant update( @RequestBody @Valid JobApplicant updatedJobApplicant) throws ResourceNotFoundException1 {
+    public  JobApplicant update( @RequestBody @Valid JobApplicant updatedJobApplicant,@PathVariable UUID applicantId) throws ResourceNotFoundException1 {
 
-        if (applicantRepository.findById(updatedJobApplicant.getApplicantId()).get() != null) {
 
-            return applicantRepository.save(updatedJobApplicant);
+        Optional<JobApplicant> jobApplicant1 = applicantRepository.findById(applicantId);
+        if (jobApplicant1.isPresent()) {
+            JobApplicant jobApplicant = jobApplicant1.get();
+            jobApplicant.setFirstName(updatedJobApplicant.getFirstName());
+            jobApplicant.setLastname(updatedJobApplicant.getLastname());
+            jobApplicant.getQualification().setEducationLevel(updatedJobApplicant.getQualification().getEducationLevel());
+            jobApplicant.getQualification().setYearsOfExperience(updatedJobApplicant.getQualification().getYearsOfExperience());
+            jobApplicant.setGender(updatedJobApplicant.getGender());
+            jobApplicant.setEmail(updatedJobApplicant.getEmail());
+            jobApplicant.setStudyProgramme(updatedJobApplicant.getStudyProgramme());
+            jobApplicant.setPhoneNumber(updatedJobApplicant.getPhoneNumber());
+
+            return applicantRepository.save(jobApplicant);
 
         } else {
             throw new ResourceNotFoundException1(JobApplicant.class, "Job-Applicant ID", updatedJobApplicant.getApplicantId().toString());

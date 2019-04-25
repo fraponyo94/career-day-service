@@ -34,10 +34,13 @@ public class JobController {
     @Autowired
    private JobService jobService;
 
+    @Autowired
+    private TimeFormatterComponent timeFormatterComponent;
+
     //Save job application
     @PostMapping("/job")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveJob(@RequestBody @Valid Job job) throws FieldViolationException {
+    public void saveJob(@RequestBody @Valid Job job) throws FieldViolationException,ParseException {
 
         jobService.saveJob(job);
 
@@ -91,10 +94,6 @@ public class JobController {
     public Page<Job> searchJobInterviews(@RequestParam (value = "name",required = false) String jobName, @RequestParam(value = "interview-date",required = false) Date interviewDate,
                                        @RequestParam(value = "job-type",required = false) String type,@RequestParam(value = "education-level",required = false)String educationLevel,
                                        @RequestParam(value = "years-of-experience",defaultValue = "0") int yearsOfExperience,Pageable pageable) throws ResourceNotFoundException1{
-
-//        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-//        try {
-//            Date date =  format.parse(interviewDate.toString());
 
 
             return jobService.searchJob(interviewDate,type,educationLevel,yearsOfExperience,jobName,pageable);

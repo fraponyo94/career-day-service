@@ -1,0 +1,17 @@
+
+
+#### POST  /API/v1/applicant Endpoint   // Creates JopApplicant resource
+   Expects data in the folloing format
+		{
+		  "firstName": "required",
+		   "lastname": "required",
+		   "email": "required",
+		   "phoneNumber":"required",
+		   "gender": "FEMALE/MALE", //Enum
+		   "studyProgramme": "Bachelor of Arts",
+		   "qualification":{
+		   	
+		    "educationLevel": "POSTGRADUATE/GRADUATE/HIGHSCHOOL/PRIMARY/OTHER", //Enum
+		    "yearsOfExperience": 1
+		   }
+		 }

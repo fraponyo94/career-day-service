@@ -15,7 +15,8 @@ import java.util.UUID;
 public interface JobRepository  extends JpaRepository<Job, UUID> {
     Page<Job> findByJobName(String JobName,Pageable pageable);
     Page<Job> findByInterviewDate(Date interviewDate,Pageable pageable);
-    Page<Job> findByInterviewDateAndTypeIgnoreCase(Date interviewDate,String jobType,Pageable pageable);
+
+    Page<Job> findByInterviewDateAndJobTypeIgnoreCase(Date interviewDate,String jobType,Pageable pageable);
     Page<Job> findByInterviewDateAndQualification_EducationLevelIgnoreCase(Date interviewDate,String eductationLevel,Pageable pageable);
     Page<Job> findByQualification_YearsOfExperience(int yearsOfExperience,Pageable pageable);
     Page<Job> findByInterviewDateAndQualification_YearsOfExperience(Date interviewDate,int yearsOfExperience,Pageable pageable);

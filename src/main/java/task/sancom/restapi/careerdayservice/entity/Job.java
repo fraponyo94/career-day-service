@@ -1,6 +1,7 @@
 package task.sancom.restapi.careerdayservice.entity;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.CreationTimestamp;
 
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
@@ -43,12 +44,13 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name="INTERVIEWDATE",unique = true,nullable = false)
+    @Column(name="INTERVIEWDATE",unique =true)
     @NotNull(message = "Interview Date required")
     @Temporal(TemporalType.DATE)
+
     private Date interviewDate;
 
-    @Column(name="INTERVIEWSTARTTIME",nullable = false)
+    @Column(name="INTERVIEWSTARTTIME")
     @NotNull(message = "Interview start time required")
     @Temporal(TemporalType.TIME)
     private Date interviewStartTime;
