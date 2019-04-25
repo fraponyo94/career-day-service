@@ -8,7 +8,7 @@ import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import java.sql.Time;
+
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Set;
@@ -45,15 +45,18 @@ public class Job {
 
     @Column(name="INTERVIEWDATE",unique = true,nullable = false)
     @NotNull(message = "Interview Date required")
+    @Temporal(TemporalType.DATE)
     private Date interviewDate;
 
     @Column(name="INTERVIEWSTARTTIME",nullable = false)
     @NotNull(message = "Interview start time required")
-    private Time interviewStartTime;
+    @Temporal(TemporalType.TIME)
+    private Date interviewStartTime;
 
     @Column(name="INTERVIEWENDDATE",nullable = false)
     @NotNull(message = "Interview End time required")
-    private Time interviewEndTime;
+    @Temporal(TemporalType.TIME)
+    private Date interviewEndTime;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name="QUALIFICATION",nullable = false)
@@ -65,9 +68,10 @@ public class Job {
 
     public Job() {   }
 
-    public Job(UUID jobId,@NotNull String jobName, @NotNull String description, @NotNull(message = "Interview Date required") Date interviewDate, @NotNull(message = "Intervie start time required") Time interviewStartTime, @NotNull(message = "Interview End time required") Time interviewEndTime, Qualification qualification) {
+    public Job(UUID jobId,@NotNull String jobName, @NotNull String description,String jobType, Date interviewDate, @NotNull(message = "Intervie start time required") Date interviewStartTime, @NotNull(message = "Interview End time required") Date interviewEndTime, Qualification qualification) {
         this.jobId = jobId;
         this.jobName = jobName;
+        this.jobType = jobType;
         this.description = description;
         this.interviewDate = interviewDate;
         this.interviewStartTime = interviewStartTime;
@@ -131,19 +135,19 @@ public class Job {
         this.interviewDate = interviewDate;
     }
 
-    public Time getInterviewStartTime() {
+    public Date getInterviewStartTime() {
         return interviewStartTime;
     }
 
-    public void setInterviewStartTime(Time interviewStartTime) {
+    public void setInterviewStartTime(Date interviewStartTime) {
         this.interviewStartTime = interviewStartTime;
     }
 
-    public Time getInterviewEndTime() {
+    public Date getInterviewEndTime() {
         return interviewEndTime;
     }
 
-    public void setInterviewEndTime(Time interviewEndTime) {
+    public void setInterviewEndTime(Date interviewEndTime) {
         this.interviewEndTime = interviewEndTime;
     }
 

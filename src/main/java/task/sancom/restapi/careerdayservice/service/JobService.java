@@ -28,14 +28,13 @@ public class JobService {
         }
     }
 
-    //ffnd All
-       public Page<Job> findAll(Pageable pageable) throws ResourceNotFoundException1{
-            Page<Job> jobs = repository.findAll(pageable);
-            if(!jobs.isEmpty()){
-                return jobs;
-            }else {
-                new ResourceNotFoundException1(Job.class, "No Jobs were Found","");
-            }
+    //find All
+       public Page<Job> findAll(Pageable pageable) throws ResourceNotFoundException1 {
+           Page<Job> jobs = repository.findAll(pageable);
+           if (jobs.isEmpty()) {
+               new ResourceNotFoundException1(Job.class, "No Jobs were Found", "");
+           }
+           return jobs;
        }
 
        //Find by Id
@@ -53,6 +52,9 @@ public class JobService {
         public  void delete(UUID jobId) throws ResourceNotFoundException1 {
             Job job = repository.findById(jobId).get();
             if (job != null) {
+                 if(job.getJobApplicants()!=null){
+                     job.getJobApplicants().removeAll(job.getJobApplicants());
+                 }
                 repository.delete(job);
             } else {
                 throw new ResourceNotFoundException1(Job.class, "No Job with id", job.getJobId() + "exist");

@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -65,15 +66,15 @@ public class JobApplicantControllerTests {
         jobApplicant.setFirstName("Anne");
         jobApplicant.setGender(Gender.MALE);
         jobApplicant.setLastname("");
-        jobApplicant.setNationality("Kennyan");
-        jobApplicant.setPhoneNumber(1000000001);
+
+
         jobApplicant.setQualification(new Qualification(EducationLevel.GRADUATE,1));
         return jobApplicant;
 
     }
 
     public Job testJob(){
-        return new Job(new UUID(8,23),"developer","develop any system", ZonedDateTime.now(),ZonedDateTime.now().minusHours(2),ZonedDateTime.now(),new Qualification(EducationLevel.GRADUATE,1));
+        return new Job(new UUID(8,23),"developer","develop any system", "",new Date(),new Date(),new Date(System.currentTimeMillis()+20*60*1000),new Qualification(EducationLevel.GRADUATE,1));
     }
 
 
@@ -174,7 +175,7 @@ public class JobApplicantControllerTests {
                     .andDo(print())
                     .andReturn();
 
-         assertThat(jobApplicantController.update(jobApplicant.getApplicantId(),applicantUpdated).getFirstName()).isEqualTo(applicantUpdated.getFirstName());
+         assertThat(jobApplicantController.update(applicantUpdated).getFirstName()).isEqualTo(applicantUpdated.getFirstName());
 
 
 

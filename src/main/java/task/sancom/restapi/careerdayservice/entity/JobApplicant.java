@@ -36,15 +36,13 @@ public class JobApplicant {
     private String email;
 
     @Column(name="PHONE",length = 15)
-    @PhoneNumberConstraint
-    private int phoneNumber;
+    @Pattern(regexp = "[0|[+254]]+[7]\\d{8}", message = "please provide a valid phone number.")
+    private String phoneNumber;
 
     @Column(name="GENDER")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "NATIONALITY")
-    private String nationality;
 
     @Column(name="STUDYPROGRAMME")
     private String studyProgramme;
@@ -105,13 +103,15 @@ public class JobApplicant {
         this.email = email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+
 
     public UUID getApplicantId() {
         return applicantId;
@@ -137,13 +137,7 @@ public class JobApplicant {
         this.gender = gender;
     }
 
-    public String getNationality() {
-        return nationality;
-    }
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
 
     public String getStudyProgramme() {
         return studyProgramme;

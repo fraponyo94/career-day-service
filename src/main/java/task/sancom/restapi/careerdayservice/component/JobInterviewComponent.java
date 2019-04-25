@@ -8,8 +8,10 @@ import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 import task.sancom.restapi.careerdayservice.repository.JobApplicantRepository;
 import task.sancom.restapi.careerdayservice.repository.JobRepository;
 
+import java.sql.Time;
 import java.time.ZonedDateTime;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Component
@@ -34,7 +36,7 @@ public class JobInterviewComponent {
     }
 
     //Check if already enrolled job interviews lie within same interview date and time
-    public boolean isJobInterviewConflict(UUID applicandId,ZonedDateTime interviewDate,ZonedDateTime interviewStartTime,ZonedDateTime intervieEndTime){
+    public boolean isJobInterviewConflict(UUID applicandId, Date interviewDate, Date interviewStartTime, Date intervieEndTime){
        boolean isJobInterviewConflict = true ;
 
         //Find Applicant given applicant Id
@@ -42,8 +44,8 @@ public class JobInterviewComponent {
 
         if(applicant.getJobInterviews() != null) {
             for (Job job : applicant.getJobInterviews()) {
-                if (job.getInterviewDate().isEqual(interviewDate) && (job.getInterviewEndTime().isBefore(interviewStartTime) ||
-                        job.getInterviewStartTime().isAfter(intervieEndTime))) {
+                if (job.getInterviewDate().equals(interviewDate) && (job.getInterviewEndTime().before(interviewStartTime) ||
+                        job.getInterviewStartTime().after(intervieEndTime))) {
                     isJobInterviewConflict = false;
                 } else {
                     break;
@@ -58,7 +60,7 @@ public class JobInterviewComponent {
 
 
     //Check for maximum of 3 interviews per day for each applicant
-    public boolean maximumInterviewsPerDayReached(UUID applicandId,ZonedDateTime interviewDate){
+    public boolean maximumInterviewsPerDayReached(UUID applicandId,Date interviewDate){
         //Find Applicant given applicant Id
         JobApplicant applicant = applicantRepository.findById(applicandId).get();
         int count =0;

@@ -2,6 +2,7 @@ package task.sancom.restapi.careerdayservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,11 @@ import task.sancom.restapi.careerdayservice.service.JobService;
 
 
 import javax.validation.Valid;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,7 +35,7 @@ public class JobController {
    private JobService jobService;
 
     //Save job application
-    @PostMapping("/jobs")
+    @PostMapping("/job")
     @ResponseStatus(HttpStatus.CREATED)
     public void saveJob(@RequestBody @Valid Job job) throws FieldViolationException {
 
@@ -39,6 +43,13 @@ public class JobController {
 
     }
 
+     @PutMapping("/job")
+     @ResponseStatus(HttpStatus.OK)
+     public void update(@RequestBody @Valid Job updated) throws ResourceNotFoundException1,FieldViolationException{
+        if (jobService.findById(updated.getJobId()).isPresent()){
+            jobService.saveJob(updated);
+        }
+     }
     //Find all jobs
     @GetMapping("/jobs")
     @ResponseStatus(HttpStatus.FOUND)
@@ -75,12 +86,22 @@ public class JobController {
 
 
     //Search for jobs(Simple search functionality)
-    @GetMapping("/jobs/search/jobs-available")
+    @GetMapping("/jobs/search")
     @ResponseStatus(HttpStatus.FOUND)
-    public Page<Job> findJobInterviews(@RequestParam ("name") String jobName, @RequestParam("interview-date") Date interviewDate,
-                                       @RequestParam("job-type") String type,@RequestParam("education-level")String educationLevel,
-                                       @RequestParam("years-of-experience") int yearsOfExperience,Pageable pageable) throws ResourceNotFoundException1{
-        return jobService.searchJob(interviewDate,type,educationLevel,yearsOfExperience,jobName,pageable);
+    public Page<Job> searchJobInterviews(@RequestParam (value = "name",required = false) String jobName, @RequestParam(value = "interview-date",required = false) Date interviewDate,
+                                       @RequestParam(value = "job-type",required = false) String type,@RequestParam(value = "education-level",required = false)String educationLevel,
+                                       @RequestParam(value = "years-of-experience",defaultValue = "0") int yearsOfExperience,Pageable pageable) throws ResourceNotFoundException1{
+
+//        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+//        try {
+//            Date date =  format.parse(interviewDate.toString());
+
+
+            return jobService.searchJob(interviewDate,type,educationLevel,yearsOfExperience,jobName,pageable);
+       // }
+
+
+
 
     }
 
