@@ -1,17 +1,18 @@
 package task.sancom.restapi.careerdayservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matcher;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -26,18 +27,13 @@ import task.sancom.restapi.careerdayservice.entity.enumerated.EducationLevel;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Gender;
 import task.sancom.restapi.careerdayservice.repository.JobApplicantRepository;
 
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.will;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.ZonedDateTime;
@@ -45,6 +41,7 @@ import java.util.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(JobApplicantController.class)
+
 public class JobApplicantControllerTests {
 
     @Autowired
@@ -53,8 +50,7 @@ public class JobApplicantControllerTests {
     @MockBean
     private  JobApplicantController jobApplicantController;
 
-    @MockBean
-    private JobApplicantRepository jobApplicantRepository;
+
 
     protected String mapToJson(Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -77,7 +73,7 @@ public class JobApplicantControllerTests {
     }
 
     public Job testJob(){
-        return new Job(new UUID(22,22),"developer","develop any system", ZonedDateTime.now(),ZonedDateTime.now().minusHours(2),ZonedDateTime.now(),new Qualification(EducationLevel.GRADUATE,1));
+        return new Job(new UUID(8,23),"developer","develop any system", ZonedDateTime.now(),ZonedDateTime.now().minusHours(2),ZonedDateTime.now(),new Qualification(EducationLevel.GRADUATE,1));
     }
 
 
@@ -147,7 +143,7 @@ public class JobApplicantControllerTests {
 
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/applicants")
+                MockMvcRequestBuilders.post("/applicant")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json))
                         .andExpect(status().isCreated())
@@ -160,54 +156,63 @@ public class JobApplicantControllerTests {
     @Test
     public  void updateApplicantTest() throws Exception{
         JobApplicant jobApplicant = testApplicant();
-        JobApplicant saved = jobApplicantRepository.save(jobApplicant);
-        assertThat(saved.getFirstName()).isNotNull();
-        System.out.println(saved);
+        JobApplicant applicantUpdated = testApplicant();
+        applicantUpdated.setFirstName("updated");
 
 
-//        //update saved user
-//        saved.setFirstName("updated");
-//
-//        given(jobApplicantController.update(jobApplicant.getApplicantId(),saved)).willReturn(jobApplicant);
-//
-//        String updateBody = mapToJson(saved);
-//
-//     mockMvc.perform(
-//        MockMvcRequestBuilders
-//                .put("/applicants/{applicantID}",jobApplicant.getApplicantId())
-//                .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(updateBody))
-//                .andExpect(status().isAccepted())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("updated"))
-//                .andDo(print())
-//                .andReturn();
 
+        given(jobApplicantController.update(applicantUpdated)).willReturn(applicantUpdated);
+
+        String updateBody = mapToJson(applicantUpdated);
+
+         mockMvc.perform(
+            MockMvcRequestBuilders
+                    .put("/applicant",jobApplicant.getApplicantId().toString())
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(updateBody))
+                    .andExpect(status().isAccepted())
+                    .andDo(print())
+                    .andReturn();
+
+         assertThat(jobApplicantController.update(jobApplicant.getApplicantId(),applicantUpdated).getFirstName()).isEqualTo(applicantUpdated.getFirstName());
 
 
 
 
     }
 
+
     @Test
     public void selectJobInterviewsTest() throws Exception{
+        JobApplicant applicant = testApplicant();
+        Job job = testJob();
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .put("/applicants/{jobApplicantId}/select?id="+job.getJobId().toString(),applicant.getApplicantId().toString()))
+
+                        .andExpect(status().isOk())
+                        .andDo(print())
+                        .andReturn();
+
+
+    }
+
+
+    @Test
+    public void deselectJobInterviewsTest() throws Exception{
         JobApplicant applicant = testApplicant();
         Job job = testJob();
 
         Set<Job> jobInterviews = new HashSet<>();
         jobInterviews.add(job);
         applicant.setJobInterviews(jobInterviews);
-
-        //when(jobApplicantController.selectJobInterviews(job.getJobId(),applicant.getApplicantId())).then(status().isOk());
-
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .put("applicants/{jobApplicantId}/select",applicant.getApplicantId().toString())
-                        .param("id",job.getJobId().toString()))
-                        .andExpect(status().isOk())
-                        .andDo(print())
-                        .andReturn();
+                        .put("/applicants/{jobApplicantId}/deselect?id="+job.getJobId().toString(),applicant.getApplicantId().toString()))
 
-
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
 
 
     }

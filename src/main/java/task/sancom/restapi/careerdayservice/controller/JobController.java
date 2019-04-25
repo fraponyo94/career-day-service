@@ -12,104 +12,76 @@ import task.sancom.restapi.careerdayservice.component.TimeFormatterComponent;
 import task.sancom.restapi.careerdayservice.entity.Job;
 import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 
+import task.sancom.restapi.careerdayservice.exception.FieldViolationException;
 import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException1;
 import task.sancom.restapi.careerdayservice.repository.JobRepository;
+import task.sancom.restapi.careerdayservice.service.JobService;
 
 
 import javax.validation.Valid;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
 @RestController
 public class JobController {
 
-
-    private JobRepository jobRepository;
-
-    public JobController(JobRepository jobRepository) {
-
-        this.jobRepository = jobRepository;
-    }
+    @Autowired
+   private JobService jobService;
 
     //Save job application
     @PostMapping("/jobs")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<Job> saveJob(@RequestBody @Valid Job job){
+    @ResponseStatus(HttpStatus.CREATED)
+    public void saveJob(@RequestBody @Valid Job job) throws FieldViolationException {
 
-        return ResponseEntity.ok(jobRepository.save(job));
+        jobService.saveJob(job);
 
     }
 
     //Find all jobs
     @GetMapping("/jobs")
-    public Page<Job> findAllJobs(Pageable pageable){
-        return jobRepository.findAll(pageable);
+    @ResponseStatus(HttpStatus.FOUND)
+    public Page<Job> findAllJobs(Pageable pageable) throws ResourceNotFoundException1{
+        return jobService.findAll(pageable);
     }
 
 
     //Find job given job ID
     @GetMapping("/jobs/{jobID}")
+    @ResponseStatus(HttpStatus.FOUND)
     public Job findJob(@PathVariable UUID jobID) throws ResourceNotFoundException1 {
-        return jobRepository.findById(jobID).orElseThrow(()->new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString()));
+        return jobService.findById(jobID).get();
     }
 
     //Delete Job  Entry
     @DeleteMapping("/jobs/{jobID}")
-    public ResponseEntity<?> deleteApplicant(@PathVariable UUID jobID) throws ResourceNotFoundException1{
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteApplicant(@PathVariable UUID jobID) throws ResourceNotFoundException1{
 
-        return jobRepository.findById(jobID).map(job -> {
-                    jobRepository.delete(job);
-                    return ResponseEntity.ok().build();
-                }
-        ).orElseThrow(() -> new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString()));
+        jobService.delete(jobID);
 
     }
 
 
     //View all Participants for a given job
     @GetMapping("/jobs/{jobID}/participants")
+    @ResponseStatus(HttpStatus.FOUND)
     public Set<JobApplicant> getJobParticipants(@PathVariable UUID jobID) throws ResourceNotFoundException1{
-      return jobRepository.findById(jobID).map(job -> {
+      return jobService.findById(jobID).map(job -> {
           return job.getJobApplicants();
-      }).orElseThrow(()->new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString()));
+      }).orElseThrow(()->new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString(),""));
     }
 
 
     //Search for jobs(Simple search functionality)
     @GetMapping("/jobs/search/jobs-available")
-    public Page<Job> findJobInterviews(@RequestParam ("name") String jobName, @RequestParam("interview-date")ZonedDateTime interviewDate,
+    @ResponseStatus(HttpStatus.FOUND)
+    public Page<Job> findJobInterviews(@RequestParam ("name") String jobName, @RequestParam("interview-date") Date interviewDate,
                                        @RequestParam("job-type") String type,@RequestParam("education-level")String educationLevel,
                                        @RequestParam("years-of-experience") int yearsOfExperience,Pageable pageable) throws ResourceNotFoundException1{
-        if(interviewDate !=null){
-            if(type != null){
-                if(educationLevel != null){
-                    if(yearsOfExperience > 0){
-                        return  jobRepository.findByInterviewDateAndTypeIgnoreCaseAndQualification_EducationLevelIgnoreCaseAndQualification_YearsOfExperience(
-                                interviewDate,type,educationLevel,yearsOfExperience,pageable   );
-                    }
-                }else {
-                   return  jobRepository.findByInterviewDateAndTypeIgnoreCase(interviewDate,type,pageable);
-                }
-            }else if(educationLevel != null){
-                return jobRepository.findByInterviewDateAndQualification_EducationLevelIgnoreCase(interviewDate,educationLevel,pageable);
-            }else if(yearsOfExperience > 0){
-                return jobRepository.findByInterviewDateAndQualification_YearsOfExperience(interviewDate,yearsOfExperience,pageable);
-            }else {
-                return jobRepository.findByInterviewDate(interviewDate,pageable);
-            }
-        }else if (jobName != null){
-            return jobRepository.findByJobName(jobName,pageable);
-        }else if(yearsOfExperience > 0){
-            return jobRepository.findByQualification_YearsOfExperience(yearsOfExperience,pageable);
-        }else if(educationLevel != null){
-           return  jobRepository.findByQualification_EducationLevel(educationLevel,pageable);
-        }else {
+        return jobService.searchJob(interviewDate,type,educationLevel,yearsOfExperience,jobName,pageable);
 
-            throw  new ResourceNotFoundException1(Job.class,"No Resource was found","");
-
-        }
-        return null;
     }
 
 

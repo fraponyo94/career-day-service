@@ -4,6 +4,7 @@ package task.sancom.restapi.careerdayservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
+import task.sancom.restapi.careerdayservice.Validation.PhoneNumberConstraint;
 import task.sancom.restapi.careerdayservice.entity.enumerated.Gender;
 
 import javax.persistence.*;
@@ -35,7 +36,7 @@ public class JobApplicant {
     private String email;
 
     @Column(name="PHONE",length = 15)
-    @Min(9)
+    @PhoneNumberConstraint
     private int phoneNumber;
 
     @Column(name="GENDER")

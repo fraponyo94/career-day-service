@@ -1,12 +1,15 @@
 package task.sancom.restapi.careerdayservice.exception;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException1 extends Exception {
 
     public ResourceNotFoundException1(Class clazz, String... searchParamsMap) {

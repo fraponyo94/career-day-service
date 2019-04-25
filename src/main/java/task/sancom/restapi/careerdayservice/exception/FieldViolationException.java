@@ -7,12 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class JobConflictException
-        extends Exception {
+@ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+public class FieldViolationException extends Exception{
 
-    public JobConflictException(Class clazz, String... searchParamsMap) {
-        super(JobConflictException.generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
+    public FieldViolationException (Class clazz, String... searchParamsMap) {
+        super(FieldViolationException .generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
     }
 
     private static String generateMessage(String entity, Map<String, String> searchParams) {
@@ -29,11 +28,4 @@ public class JobConflictException
                         (m, i) -> m.put(keyType.cast(entries[i]), valueType.cast(entries[i + 1])),
                         Map::putAll);
     }
-
 }
-
-
-
-
-
-

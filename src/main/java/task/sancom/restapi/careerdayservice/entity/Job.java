@@ -2,13 +2,15 @@ package task.sancom.restapi.careerdayservice.entity;
 
 
 import org.hibernate.annotations.CreationTimestamp;
-import task.sancom.restapi.careerdayservice.entity.enumerated.JobType;
+
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import java.sql.Time;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,7 +27,7 @@ public class Job {
     @CreationTimestamp
     private ZonedDateTime dateCreated;
 
-    @Column(name = "NAME",nullable = false)
+    @Column(name = "NAME",nullable = false,unique = true)
     @NotNull
     private String jobName;
 
@@ -33,12 +35,9 @@ public class Job {
     @NotNull
     private String description;
 
-    @Column(name="TYPE")
-    @Enumerated(EnumType.STRING)
-    private JobType type;
-
-    @Column(name="OTHERJOBTYPE")
-    private String otherJobType;
+    @Column(name="TYPE",nullable = false)
+    @NotNull
+    private String jobType;
 
     @Column(name="STATUS")
     @Enumerated(EnumType.STRING)
@@ -46,15 +45,15 @@ public class Job {
 
     @Column(name="INTERVIEWDATE",unique = true,nullable = false)
     @NotNull(message = "Interview Date required")
-    private ZonedDateTime interviewDate;
+    private Date interviewDate;
 
     @Column(name="INTERVIEWSTARTTIME",nullable = false)
-    @NotNull(message = "Intervie start time required")
-    private ZonedDateTime interviewStartTime;
+    @NotNull(message = "Interview start time required")
+    private Time interviewStartTime;
 
     @Column(name="INTERVIEWENDDATE",nullable = false)
     @NotNull(message = "Interview End time required")
-    private ZonedDateTime interviewEndTime;
+    private Time interviewEndTime;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name="QUALIFICATION",nullable = false)
@@ -66,7 +65,7 @@ public class Job {
 
     public Job() {   }
 
-    public Job(UUID jobId,@NotNull String jobName, @NotNull String description, @NotNull(message = "Interview Date required") ZonedDateTime interviewDate, @NotNull(message = "Intervie start time required") ZonedDateTime interviewStartTime, @NotNull(message = "Interview End time required") ZonedDateTime interviewEndTime, Qualification qualification) {
+    public Job(UUID jobId,@NotNull String jobName, @NotNull String description, @NotNull(message = "Interview Date required") Date interviewDate, @NotNull(message = "Intervie start time required") Time interviewStartTime, @NotNull(message = "Interview End time required") Time interviewEndTime, Qualification qualification) {
         this.jobId = jobId;
         this.jobName = jobName;
         this.description = description;
@@ -74,6 +73,14 @@ public class Job {
         this.interviewStartTime = interviewStartTime;
         this.interviewEndTime = interviewEndTime;
         this.qualification = qualification;
+    }
+
+    public UUID getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(UUID jobId) {
+        this.jobId = jobId;
     }
 
     public ZonedDateTime getDateCreated() {
@@ -100,20 +107,12 @@ public class Job {
         this.description = description;
     }
 
-    public JobType getType() {
-        return type;
+    public String getJobType() {
+        return jobType;
     }
 
-    public void setType(JobType type) {
-        this.type = type;
-    }
-
-    public String getOtherJobType() {
-        return otherJobType;
-    }
-
-    public void setOtherJobType(String otherJobType) {
-        this.otherJobType = otherJobType;
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
     }
 
     public Status getStatus() {
@@ -124,36 +123,28 @@ public class Job {
         this.status = status;
     }
 
-    public ZonedDateTime getInterviewDate() {
+    public Date getInterviewDate() {
         return interviewDate;
     }
 
-    public void setInterviewDate(ZonedDateTime interviewDate) {
+    public void setInterviewDate(Date interviewDate) {
         this.interviewDate = interviewDate;
     }
 
-    public ZonedDateTime getInterviewStartTime() {
+    public Time getInterviewStartTime() {
         return interviewStartTime;
     }
 
-    public void setInterviewStartTime(ZonedDateTime interviewStartTime) {
+    public void setInterviewStartTime(Time interviewStartTime) {
         this.interviewStartTime = interviewStartTime;
     }
 
-    public ZonedDateTime getInterviewEndTime() {
+    public Time getInterviewEndTime() {
         return interviewEndTime;
     }
 
-    public void setInterviewEndTime(ZonedDateTime interviewEndTime) {
+    public void setInterviewEndTime(Time interviewEndTime) {
         this.interviewEndTime = interviewEndTime;
-    }
-
-    public UUID getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(UUID jobId) {
-        this.jobId = jobId;
     }
 
     public Qualification getQualification() {

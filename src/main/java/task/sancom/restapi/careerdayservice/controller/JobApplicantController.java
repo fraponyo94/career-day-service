@@ -28,6 +28,7 @@ public class JobApplicantController {
     private JobInterviewComponent jobInterviewComponent;
     private JobRepository jobRepository;
 
+    @Autowired
     public JobApplicantController(JobApplicantRepository applicantRepository, JobInterviewComponent jobInterviewComponent, JobRepository jobRepository) {
         this.applicantRepository = applicantRepository;
         this.jobInterviewComponent = jobInterviewComponent;
@@ -35,7 +36,7 @@ public class JobApplicantController {
     }
 
     //Add job jobApplicant details
-    @PostMapping( "/applicants")
+    @PostMapping( "/applicant")
     @ResponseStatus(HttpStatus.CREATED)
     public JobApplicant save(@RequestBody @Valid JobApplicant jobApplicant) throws ResourceNotFoundException1{
         if(jobApplicant != null) {
@@ -47,28 +48,16 @@ public class JobApplicantController {
 
 
     //Update job applicant details
-    @PutMapping("/applicants/{applicantID}")
+    @PutMapping("/applicant")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public  JobApplicant update(@PathVariable UUID applicantID, @RequestBody @Valid JobApplicant updatedJobApplicant) throws ResourceNotFoundException1 {
+    public  JobApplicant update( @RequestBody @Valid JobApplicant updatedJobApplicant) throws ResourceNotFoundException1 {
 
-        JobApplicant jobApplicant = applicantRepository.findById(applicantID).get();
+        if (applicantRepository.findById(updatedJobApplicant.getApplicantId()).get() != null) {
 
-        if (jobApplicant != null) {
-
-            jobApplicant.setFirstName(updatedJobApplicant.getFirstName());
-            jobApplicant.setLastname(updatedJobApplicant.getLastname());
-            jobApplicant.setEmail(updatedJobApplicant.getEmail());
-            jobApplicant.setPhoneNumber(updatedJobApplicant.getPhoneNumber());
-            jobApplicant.setGender(updatedJobApplicant.getGender());
-            jobApplicant.getQualification().setEducationLevel(updatedJobApplicant.getQualification().getEducationLevel());
-            jobApplicant.setDateCreated(updatedJobApplicant.getDateCreated());
-            jobApplicant.setNationality(updatedJobApplicant.getNationality());
-            jobApplicant.setStudyProgramme(updatedJobApplicant.getStudyProgramme());
-            jobApplicant.getQualification().setYearsOfExperience(updatedJobApplicant.getQualification().getYearsOfExperience());
-            return applicantRepository.save(jobApplicant);
+            return applicantRepository.save(updatedJobApplicant);
 
         } else {
-            throw new ResourceNotFoundException1(JobApplicant.class, "Job-Applicant ID", applicantID.toString());
+            throw new ResourceNotFoundException1(JobApplicant.class, "Job-Applicant ID", updatedJobApplicant.getApplicantId().toString());
         }
     }
 
