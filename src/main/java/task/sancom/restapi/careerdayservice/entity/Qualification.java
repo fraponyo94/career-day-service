@@ -1,5 +1,6 @@
 package task.sancom.restapi.careerdayservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import task.sancom.restapi.careerdayservice.entity.enumerated.EducationLevel;
 
 import javax.persistence.*;
@@ -19,6 +20,8 @@ public class Qualification {
 
     @Column(name = "YEARSOFEXPERIENCE",nullable = false)
     private int yearsOfExperience;
+
+
 
 
     public Qualification() {
@@ -53,6 +56,8 @@ public class Qualification {
     public void setYearsOfExperience(int yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
     }
+
+
 }
 
 

@@ -1,8 +1,6 @@
 package task.sancom.restapi.careerdayservice.Validation;
 
-import task.sancom.restapi.careerdayservice.exception.SubException;
-
-public class ErrorValidation extends SubException {
+public class ErrorValidation {
     private String object;
     private String field;
     private Object rejectedValue;

@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import task.sancom.restapi.careerdayservice.component.JobInterviewComponent;
-import task.sancom.restapi.careerdayservice.component.TimeFormatterComponent;
 import task.sancom.restapi.careerdayservice.entity.Job;
 import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 import task.sancom.restapi.careerdayservice.exception.*;
@@ -15,11 +14,7 @@ import task.sancom.restapi.careerdayservice.repository.JobApplicantRepository;
 import task.sancom.restapi.careerdayservice.repository.JobRepository;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 public class JobApplicantController {
@@ -101,7 +96,8 @@ public class JobApplicantController {
 
     //Select job interviews to participate in
     @PutMapping("applicants/{jobApplicantId}/select")
-    public  ResponseEntity<?> selectJobInterviews(@RequestParam("id") UUID jobID,@PathVariable UUID jobApplicantId)
+    @ResponseStatus(HttpStatus.OK)
+    public  void selectJobInterviews(@RequestParam("id") UUID jobID,@PathVariable UUID jobApplicantId)
     throws MaximumJobsAppliedException,JobHasMaximumParticipantsException,JobConflictException,ResourceNotFoundException1{
 
         //Job intervie selected
@@ -125,7 +121,7 @@ public class JobApplicantController {
                             jobInterviews.add(jobInterviewSelected);
                             applicant.setJobInterviews(jobInterviews);
 
-                            return   ResponseEntity.ok(applicantRepository.save(applicant));
+                            applicantRepository.save(applicant);
 
 
                     } else {
@@ -148,7 +144,8 @@ public class JobApplicantController {
 
     //DeSelect job interviews to participate opt out
     @PutMapping("applicants/{jobApplicantId}/deselect")
-   public ResponseEntity<?> deselectJobInterviews(@PathVariable UUID jobApplicantId,@RequestParam("id") UUID jobID ) throws ResourceNotFoundException1{
+    @ResponseStatus(HttpStatus.OK)
+   public void deselectJobInterviews(@PathVariable UUID jobApplicantId,@RequestParam("id") UUID jobID ) throws ResourceNotFoundException1{
 
         //Job intervie selected
         Job jobInterviewdeselected = jobRepository.findById(jobID).get();
@@ -159,7 +156,7 @@ public class JobApplicantController {
 
            if(applicant.getJobInterviews().contains(jobInterviewdeselected)){
                applicant.getJobInterviews().remove(jobInterviewdeselected);
-               return ResponseEntity.ok(applicantRepository.save(applicant));
+               applicantRepository.save(applicant);
            }else{
                throw new ResourceNotFoundException1(Job.class,"Job ID",jobID.toString());
            }
@@ -169,9 +166,9 @@ public class JobApplicantController {
    }
 
 
-   //List job interviews an applicant has enrolled for
-    @GetMapping("applicants/{applicantId}/job-interviews")
-    public Set<Job> viewJobInterviewsPerApplicant(@PathVariable UUID applicantId) throws ResourceNotFoundException1 {
+    //Job interviews an applicant has enrolled
+    @GetMapping("applicants/job-interviews")
+    public Set<Job> viewJobInterviewsPerApplicant(@RequestParam("applicant-id") UUID applicantId) throws ResourceNotFoundException1 {
 
         return applicantRepository.findById(applicantId).map(applicant -> {
             return applicant.getJobInterviews();

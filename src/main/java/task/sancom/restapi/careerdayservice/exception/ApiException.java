@@ -53,11 +53,11 @@ public class ApiException {
     }
 
     private void addValidationError(String object, String field, Object rejectedValue, String message) {
-        addSubError(new ErrorValidation(object, field, rejectedValue, message));
+        //addSubError(new ErrorValidation(object, field, rejectedValue, message));
     }
 
     private void addValidationError(String object, String message) {
-        addSubError(new ErrorValidation(object, message));
+      //  addSubError(new ErrorValidation(object, message));
     }
 
     private void addValidationError(FieldError fieldError) {

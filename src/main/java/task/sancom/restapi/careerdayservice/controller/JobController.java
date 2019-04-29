@@ -2,29 +2,22 @@ package task.sancom.restapi.careerdayservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.http.HttpStatus;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import task.sancom.restapi.careerdayservice.component.TimeFormatterComponent;
 import task.sancom.restapi.careerdayservice.entity.Job;
 import task.sancom.restapi.careerdayservice.entity.JobApplicant;
 
 import task.sancom.restapi.careerdayservice.exception.FieldViolationException;
 import task.sancom.restapi.careerdayservice.exception.ResourceNotFoundException1;
-import task.sancom.restapi.careerdayservice.repository.JobRepository;
 import task.sancom.restapi.careerdayservice.service.JobService;
 
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,8 +27,7 @@ public class JobController {
     @Autowired
    private JobService jobService;
 
-    @Autowired
-    private TimeFormatterComponent timeFormatterComponent;
+
 
     //Save job application
     @PostMapping("/job")
@@ -46,13 +38,26 @@ public class JobController {
 
     }
 
-     @PutMapping("/job")
+     @PutMapping("/jobs")
      @ResponseStatus(HttpStatus.OK)
-     public void update(@RequestBody @Valid Job updated) throws ResourceNotFoundException1,FieldViolationException{
-        if (jobService.findById(updated.getJobId()).isPresent()){
-            jobService.saveJob(updated);
+     public void update(@PathVariable UUID jobId,@RequestBody @Valid Job updated) throws ResourceNotFoundException1,FieldViolationException{
+        Job job = jobService.findById(jobId).get();
+        if (job != null){
+            job.setJobName(updated.getJobName());
+            job.setJobType(updated.getJobType());
+            job.setDescription(updated.getDescription());
+            job.setInterviewDate(updated.getInterviewDate());
+            job.setInterviewStartTime(updated.getInterviewStartTime());
+            job.setInterviewEndTime(updated.getInterviewEndTime());
+            job.getQualification().setEducationLevel(updated.getQualification().getEducationLevel());
+            job.getQualification().setYearsOfExperience(updated.getQualification().getYearsOfExperience());
+            jobService.saveJob(job);
         }
      }
+
+
+
+
     //Find all jobs
     @GetMapping("/jobs")
     @ResponseStatus(HttpStatus.FOUND)

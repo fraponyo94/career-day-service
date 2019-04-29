@@ -84,25 +84,6 @@ public class JobControllerTest {
 
     }
 
-    //Test update method
-    @Test
-    public void updateJobtest() throws Exception{
-        Job job = testJob();
-        Job updatedJob = job;
-        updatedJob.setJobName("software");
-
-        String updateBody = mapToJson(updatedJob);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders
-                        .put("/job",job.getJobId().toString())
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(updateBody))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
-
-          }
 
           @Test
     public void findAllJobsTest() throws Exception{

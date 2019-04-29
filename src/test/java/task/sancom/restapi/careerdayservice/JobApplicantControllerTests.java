@@ -90,7 +90,7 @@ public class JobApplicantControllerTests {
 
 
 
-        given(jobApplicantController.findAll(Pageable.unpaged())).willReturn((jobApplicants));
+       given(jobApplicantController.findAll(Pageable.unpaged())).willReturn((jobApplicants));
 
        mockMvc.perform(
                MockMvcRequestBuilders
@@ -154,33 +154,6 @@ public class JobApplicantControllerTests {
 
     }
 
-//    @Test
-//    public  void updateApplicantTest() throws Exception{
-//        JobApplicant jobApplicant = testApplicant();
-//        JobApplicant applicantUpdated = testApplicant();
-//        applicantUpdated.setFirstName("updated");
-//
-//
-//
-//        given(jobApplicantController.update(applicantUpdated,jobApplicant.getApplicantId())).willReturn(applicantUpdated);
-//
-//        String updateBody = mapToJson(applicantUpdated);
-//
-//         mockMvc.perform(
-//            MockMvcRequestBuilders
-//                    .put("/applicant",jobApplicant.getApplicantId().toString())
-//                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                    .content(updateBody))
-//                    .andExpect(status().isAccepted())
-//                    .andDo(print())
-//                    .andReturn();
-//
-//         assertThat(jobApplicantController.update(applicantUpdated,jobApplicant.getApplicantId()).getFirstName()).isEqualTo(applicantUpdated.getFirstName());
-//
-//
-//
-//
-//    }
 
 
     @Test

@@ -1,7 +1,8 @@
 package task.sancom.restapi.careerdayservice.entity;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import task.sancom.restapi.careerdayservice.entity.enumerated.Status;
@@ -25,10 +26,10 @@ public class Job {
     private UUID jobId;
 
     @Column(name="DATECREATED",insertable = false, updatable = false)
-    @CreationTimestamp
+   @CreationTimestamp
     private ZonedDateTime dateCreated;
 
-    @Column(name = "NAME",nullable = false,unique = true)
+    @Column(name = "NAME",nullable = false)
     @NotNull
     private String jobName;
 
@@ -37,27 +38,33 @@ public class Job {
     private String description;
 
     @Column(name="TYPE",nullable = false)
-    @NotNull
+    @NotNull(message = "Job type required")
     private String jobType;
 
     @Column(name="STATUS")
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name="INTERVIEWDATE",unique =true)
+    @Column(name="INTERVIEWDATE")
     @NotNull(message = "Interview Date required")
     @Temporal(TemporalType.DATE)
-
+   @JsonFormat
+           (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date interviewDate;
 
     @Column(name="INTERVIEWSTARTTIME")
     @NotNull(message = "Interview start time required")
     @Temporal(TemporalType.TIME)
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private Date interviewStartTime;
 
     @Column(name="INTERVIEWENDDATE",nullable = false)
     @NotNull(message = "Interview End time required")
     @Temporal(TemporalType.TIME)
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+
     private Date interviewEndTime;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -66,6 +73,7 @@ public class Job {
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "JOBAPPLICANTS")
+    @JsonIgnore
     private Set<JobApplicant> jobApplicants;
 
     public Job() {   }
@@ -168,4 +176,6 @@ public class Job {
     public void setJobApplicants(Set<JobApplicant> jobApplicants) {
         this.jobApplicants = jobApplicants;
     }
+
+
 }
